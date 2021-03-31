@@ -15,6 +15,7 @@ const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.hyqj7.mongodb.net/${DB
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const productsCollection = client.db("noboniMart").collection("products");
+    const ordersCollection = client.db("noboniMart").collection("orders");
 
     app.post('/addProducts', (req, res) => {
         const newProduct = req.body
@@ -30,6 +31,14 @@ client.connect(err => {
                 res.send(document)
             })
     })
+
+    app.get('/manageProducts', (req, res) => {
+        const userEmail = req.query.email
+        productsCollection.find({email: userEmail})
+            .toArray((error, document) => {
+                res.send(document)
+            })
+    })
     app.get('/product/:id', (req, res) => {
         const id = ObjectID(req.params.id)
         productsCollection.find({ _id: id })
@@ -41,6 +50,23 @@ client.connect(err => {
         const id = ObjectID(req.params.id)
         productsCollection.deleteOne({ _id: id })
             .then(result => res.send(result.deletedCount > 0))
+    });
+
+    app.post('/addOrder', (req, res) => {
+        const newOrder = req.body
+        // console.log(newOrder);
+        ordersCollection.insertOne(newOrder)
+            .then(result => {
+                res.send(result.insertedCount > 0)
+            })
+    });
+
+    app.get('/order', (req, res) => {
+        const userEmail = req.query.email
+        ordersCollection.find({email: userEmail})
+            .toArray((error, document) => {
+                res.send(document)
+            })
     })
 
 });
