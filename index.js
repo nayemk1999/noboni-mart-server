@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config()
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
-const port = process.env.PORT || 3005
+const port = 3005
 
 const app = express()
 app.use(cors())
@@ -74,4 +74,4 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.listen(port)
+app.listen(process.env.PORT || port)
